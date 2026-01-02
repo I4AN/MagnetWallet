@@ -1,57 +1,73 @@
-# MagnetWallet
+# React + TypeScript + Vite
 
-Aplicativo personal para registrar gastos/ingresos con gráficas, usando:
-- Vite + React + TypeScript
-- Firebase Hosting
-- Firebase Auth (Google)
-- Firestore (datos por usuario)
-- Recharts (gráficas)
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## 1) Configuración local
+Currently, two official plugins are available:
 
-1. Instala dependencias:
-   ```bash
-   npm install
-   ```
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-2. Crea un archivo `.env.local` (puedes copiar `.env.example`):
-   ```bash
-   cp .env.example .env.local
-   ```
+## React Compiler
 
-3. Ejecuta en desarrollo:
-   ```bash
-   npm run dev
-   ```
+The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
 
-## 2) Configuración en Firebase Console
+## Expanding the ESLint configuration
 
-1. Authentication → Sign-in method → habilita **Google**
-2. Firestore Database → Create database (modo producción recomendado)
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-## 3) Deploy a Firebase Hosting
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-```bash
-npm run build
-firebase deploy
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
+
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
 
-## 4) Estructura de datos
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-Se guarda por usuario:
-- `users/{uid}/transactions`
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-Documento:
-- `date` (YYYY-MM-DD)
-- `amount` (number)
-- `type` ("expense" | "income")
-- `category` (string)
-- `note` (string opcional)
-- `createdAt` (number)
-
-
-## Reglas de Firestore (incluidas en el repo)
-
-Este repo incluye `firestore.rules` para que cada usuario solo pueda leer/escribir sus propios documentos en `/users/{uid}`.
-
-Al hacer `firebase deploy`, también se despliegan las reglas e índices (si Firestore está habilitado).
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
