@@ -1,9 +1,95 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Todo vive bajo /users/{uid}/...
-    match /users/{userId}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function hasField(field) {
+      return request.resource.data.keys().hasAny([field]);
+    }
+
+    function isValidDateString(value) {
+      return value is string && value.size() == 10 && value.matches('^\\d{4}-\\d{2}-\\d{2}$');
+    }
+
+    function isValidMonthString(value) {
+      return value is string && value.size() == 7 && value.matches('^\\d{4}-\\d{2}$');
+    }
+
+    function isValidTransaction() {
+      return request.resource.data.keys().hasOnly([
+        'date',
+        'amount',
+        'type',
+        'category',
+        'note',
+        'createdAt',
+        'createdAtServer'
+      ])
+      && isValidDateString(request.resource.data.date)
+      && request.resource.data.amount is number
+      && request.resource.data.amount > 0
+      && (request.resource.data.type == 'expense' || request.resource.data.type == 'income')
+      && request.resource.data.category is string
+      && request.resource.data.category.size() > 0
+      && request.resource.data.category.size() <= 40
+      && (!hasField('note') || (request.resource.data.note is string && request.resource.data.note.size() <= 200))
+      && (!hasField('createdAt') || request.resource.data.createdAt is int);
+    }
+
+    function isValidSalary(month) {
+      return request.resource.data.keys().hasOnly([
+        'amount',
+        'month',
+        'updatedAt',
+        'updatedAtServer'
+      ])
+      && isValidMonthString(month)
+      && request.resource.data.month == month
+      && request.resource.data.amount is number
+      && request.resource.data.amount >= 0
+      && (!hasField('updatedAt') || request.resource.data.updatedAt is int);
+    }
+
+    function isValidBudget(month) {
+      return request.resource.data.keys().hasOnly([
+        'name',
+        'amount',
+        'month',
+        'updatedAt',
+        'updatedAtServer'
+      ])
+      && isValidMonthString(month)
+      && request.resource.data.month == month
+      && request.resource.data.name is string
+      && request.resource.data.name.size() > 0
+      && request.resource.data.name.size() <= 40
+      && request.resource.data.amount is number
+      && request.resource.data.amount > 0
+      && (!hasField('updatedAt') || request.resource.data.updatedAt is int);
+    }
+
+    match /users/{userId}/transactions/{txId} {
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId) && isValidTransaction();
+      allow delete: if isOwner(userId);
+    }
+
+    match /users/{userId}/salaryByMonth/{month} {
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId) && isValidSalary(month);
+      allow delete: if isOwner(userId);
+    }
+
+    match /users/{userId}/budgets/{month}/categories/{categoryId} {
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId) && isValidBudget(month);
+      allow delete: if isOwner(userId);
     }
   }
 }

@@ -7,9 +7,11 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  where,
   type Unsubscribe,
 } from "firebase/firestore";
 import { db } from "./firebase";
+import { firstDayOfMonth, nextMonth } from "../lib/date";
 import type { Transaction, TransactionCreateInput } from "../types/transaction";
 
 function txCollection(uid: string) {
@@ -30,10 +32,13 @@ export async function deleteTransaction(uid: string, id: string) {
 
 export function subscribeTransactions(
   uid: string,
+  month: string,
   onData: (txs: Transaction[]) => void,
   onError?: (err: Error) => void
 ): Unsubscribe {
-  const q = query(txCollection(uid), orderBy("date", "desc"));
+  const start = firstDayOfMonth(month);
+  const end = firstDayOfMonth(nextMonth(month));
+  const q = query(txCollection(uid), where("date", ">=", start), where("date", "<", end), orderBy("date", "desc"));
   return onSnapshot(
     q,
     (snap) => {

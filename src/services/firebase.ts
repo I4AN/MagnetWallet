@@ -2,6 +2,7 @@
 // L1
 import { initializeApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
+import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 // L5
@@ -17,6 +18,7 @@ const firebaseConfig = {
 
 // L17
 export const firebaseApp = initializeApp(firebaseConfig);
+export const auth = getAuth(firebaseApp);
 export const db = getFirestore(firebaseApp);
 
 // L20 (opcional)
