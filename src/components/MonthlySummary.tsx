@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts";
 import type { BudgetCategory } from "../services/budgets";
-import Carousel from "./Carousel";
+import Carousel from "../components/Carousel";
 
 type CategoryTotal = {
   name: string;
