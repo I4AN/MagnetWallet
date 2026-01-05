@@ -8,6 +8,7 @@ import { StatsOverview } from "../components/StatsOverview";
 import { TransactionForm } from "../components/TransactionForm";
 import { TransactionsTable } from "../components/TransactionsTable";
 import { useBudgets } from "../hooks/useBudgets";
+import { useBreakpoint } from "../hooks/useBreakpoint";
 import { useMonthlySalary } from "../hooks/useMonthlySalary";
 import { useMonthSelection } from "../hooks/useMonthSelection";
 import { useTransactionForm } from "../hooks/useTransactionForm";
@@ -22,6 +23,7 @@ type DashboardPageProps = {
 };
 
 export default function App({ user, authError, onSignIn, onSignOut }: DashboardPageProps) {
+  const { isMobile, isTablet } = useBreakpoint();
   const { month, setMonth, date, setDate } = useMonthSelection();
   const {
     categoryGroup,
@@ -81,8 +83,10 @@ export default function App({ user, authError, onSignIn, onSignOut }: DashboardP
     await removeTransaction(id);
   }
 
+  const appClass = `app ${isMobile ? "app--mobile" : isTablet ? "app--tablet" : "app--desktop"}`;
+
   return (
-    <div className="app">
+    <div className={appClass}>
       <Header user={user} onSignIn={onSignIn} onSignOut={onSignOut} />
 
       <main className="main">
@@ -98,7 +102,7 @@ export default function App({ user, authError, onSignIn, onSignOut }: DashboardP
           />
         </section>
 
-        <section className="grid">
+        <section className="grid grid--dashboard">
           <StatsOverview salary={salary} totals={totals} available={available} />
           <TransactionForm
             categoryGroups={EXPENSE_CATEGORY_GROUPS}
@@ -118,9 +122,14 @@ export default function App({ user, authError, onSignIn, onSignOut }: DashboardP
             onNoteChange={setNote}
             onSave={handleAdd}
           />
+          <MonthlySummary
+            month={month}
+            byCategory={byCategory}
+            daily={daily}
+            budgets={budgets}
+            spentByCategory={byCategory}
+          />
         </section>
-
-        <MonthlySummary month={month} byCategory={byCategory} daily={daily} />
 
         <BudgetSection
           month={month}

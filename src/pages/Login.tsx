@@ -1,6 +1,7 @@
 import type { User } from "firebase/auth";
 import "./App.css";
 import { Header } from "../components/Header";
+import { useBreakpoint } from "../hooks/useBreakpoint";
 
 type LoginPageProps = {
   user: User | null;
@@ -10,8 +11,11 @@ type LoginPageProps = {
 };
 
 export default function LoginPage({ user, error, onSignIn, onSignOut }: LoginPageProps) {
+  const { isMobile, isTablet } = useBreakpoint();
+  const appClass = `app ${isMobile ? "app--mobile" : isTablet ? "app--tablet" : "app--desktop"}`;
+
   return (
-    <div className="app">
+    <div className={appClass}>
       <Header user={user} onSignIn={onSignIn} onSignOut={onSignOut} />
 
       <main className="main">
