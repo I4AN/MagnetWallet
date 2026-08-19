@@ -2,6 +2,7 @@ import type { User } from "firebase/auth";
 import "./App.css";
 import { Header } from "../components/Header";
 import { useBreakpoint } from "../hooks/useBreakpoint";
+import logo from "../assets/magnet.png";
 
 type LoginPageProps = {
   user: User | null;
@@ -18,25 +19,28 @@ export default function LoginPage({ user, error, onSignIn, onSignOut }: LoginPag
     <div className={appClass}>
       <Header user={user} onSignIn={onSignIn} onSignOut={onSignOut} />
 
-      <main className="main">
+      <main className="main main--login">
         {error && <div className="alert">{error}</div>}
-        <section className="card">
-          <h2>Antes de empezar</h2>
-          <ol className="list">
-            <li>En Firebase Console - Authentication - habilita "Google".</li>
-            <li>En Firestore Database - crea la base (modo produccion recomendado).</li>
-            <li>Luego vuelve aqui e inicia sesion.</li>
-          </ol>
-          <p className="muted">
-            Este proyecto guarda tus movimientos en <code>users/&lt;uid&gt;/transactions</code>.
+        <section className="card login">
+          <img className="login__logo" src={logo} alt="Magnet Wallet" />
+          <h1 className="login__title">Bienvenido a Magnet Wallet</h1>
+          <p className="login__subtitle">
+            Registra tus gastos e ingresos, define presupuestos por categoria y descubre en que se va tu dinero mes a
+            mes.
           </p>
+          <button className="btn btn--primary login__cta" onClick={onSignIn}>
+            Iniciar sesion con Google
+          </button>
+          <ul className="login__features">
+            <li>📊 Resumen mensual con graficos</li>
+            <li>🎯 Presupuestos por categoria</li>
+            <li>🔒 Tus datos son privados: solo tu cuenta puede verlos</li>
+          </ul>
         </section>
       </main>
 
       <footer className="footer">
-        <span className="muted">
-          Consejo: en Firebase Console puedes desplegar reglas para que solo tu usuario acceda a sus datos.
-        </span>
+        <span className="muted">Magnet Wallet — control personal de gastos.</span>
       </footer>
     </div>
   );

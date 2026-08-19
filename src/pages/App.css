@@ -606,6 +606,65 @@ input:focus, select:focus {
   width: 98%;
 }
 
+.main--login {
+  min-height: calc(100vh - 180px);
+  align-content: center;
+  justify-items: center;
+}
+
+.login {
+  max-width: 440px;
+  width: 100%;
+  padding: 32px 28px;
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+  text-align: center;
+}
+
+.login__logo {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  border-radius: 18px;
+}
+
+.login__title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.login__subtitle {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  opacity: 0.75;
+}
+
+.login__cta {
+  height: 44px;
+  padding: 0 20px;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.login__features {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  width: 100%;
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.app--mobile .login {
+  padding: 24px 18px;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

@@ -2,7 +2,9 @@
 
 Aplicación web de **control de gastos personales**. Permite registrar movimientos (gastos e ingresos), definir un sueldo mensual, asignar presupuestos por categoría y visualizar resúmenes con gráficos, todo organizado por mes. Cada usuario inicia sesión con Google y sus datos quedan aislados en Firestore bajo su propio UID.
 
-**Demo en producción:** hospedada en Firebase Hosting (proyecto `magnet-manage`).
+### 🌐 Accede a la aplicación
+
+**➡️ [magnet-manage.web.app](https://magnet-manage.web.app)** — hospedada en Firebase Hosting (proyecto `magnet-manage`).
 
 ---
 
